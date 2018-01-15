@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.MainScreen">
+   <children>
+      <Label layoutX="314.0" layoutY="58.0" prefHeight="25.0" prefWidth="130.0" text="Productname" />
+      <ListView fx:id="listviewCart" layoutX="14.0" layoutY="14.0" prefHeight="322.0" prefWidth="269.0" />
+      <Label fx:id="labelProductSum" alignment="CENTER_RIGHT" layoutX="36.0" layoutY="358.0" prefHeight="16.0" prefWidth="209.0" text="Summe: 200 €" textAlignment="RIGHT" AnchorPane.rightAnchor="555.0" />
+      <Button layoutX="654.0" layoutY="352.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="130.0" text="Zur Kasse" />
+      <Separator layoutX="290.0" layoutY="13.0" orientation="VERTICAL" prefHeight="374.0" prefWidth="6.0" />
+      <Label layoutX="314.0" layoutY="90.0" prefHeight="16.0" prefWidth="87.0" text="Price" />
+      <Pane fx:id="paneEmptyShoppingCart" layoutX="448.0" layoutY="55.0" prefHeight="200.0" prefWidth="200.0" visible="false">
+         <children>
+            <ImageView fx:id="imageUser" fitHeight="40.0" fitWidth="43.0" layoutX="80.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/shopping_cart.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="27.0" layoutY="127.0" text="Einkaufswagen ist leer" />
+         </children>
+      </Pane>
+      <ImageView fitHeight="40.0" fitWidth="31.0" layoutX="252.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/price_30px.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

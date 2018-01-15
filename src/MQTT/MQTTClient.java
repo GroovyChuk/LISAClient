@@ -12,6 +12,7 @@ public class MQTTClient {
     private MQTT mqtt;
     private BlockingConnection connection;
     private Topic [] topic;
+    private Thread sessionThread;
 
     private ArrayList<MQTTListener> mqttListener;
     private static final String SERVER_IP = "localhost";
@@ -29,6 +30,23 @@ public class MQTTClient {
             connection.connect();
             connection.subscribe(topic);
 
+            sessionThread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Message message = connection.receive();
+                        String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
+                        message.ack();
+
+                        for (MQTTListener listener : mqttListener)
+                            listener.onSessionCodeScanned(payload);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            };
         }
         catch (Exception e){
             e.printStackTrace();
@@ -48,23 +66,11 @@ public class MQTTClient {
     }
 
     public void startSessionThread () {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Message message = connection.receive();
-                    String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
-                    message.ack();
-
-                    for (MQTTListener listener : mqttListener)
-                        listener.onSessionCodeScanned(payload);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }.start();
+        sessionThread.start();
     }
+    public void stopSessionThread () {
+        sessionThread.stop();
+    }
+
 
 }

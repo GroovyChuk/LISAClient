@@ -38,7 +38,6 @@ public class App extends Application {
         window.show();
     }
 
-
     public static void main(String[] args) {
         mqttClient = new MQTTClient();
         mqttClient.startSessionThread();

@@ -14,17 +14,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+import main.RFIDReaderThread;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
 /**
  * Created by alasdair on 09.01.18.
  */
-public class MainScreen{
+public class MainScreen implements RFIDReaderThread.RFIDReader{
 
     @FXML
     AnchorPane anchorPane;
@@ -61,22 +61,11 @@ public class MainScreen{
     ImageView imageViewProductType;
 
     private ObservableList<Product> cartList = FXCollections.observableArrayList();
-
+    private Thread readerThread;
 
     @FXML
     private void initialize() throws IOException {
-        Request request = new Request();
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject = request.getURL(new URL("http://192.168.178.75:5000/products/4388810057817"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
 
-        Product product = new Product(jsonObject.get("Name").toString(), "Rewe",
-                Float.valueOf(jsonObject.get("Preis").toString()),"Getränk" ,
-                new NutritionFact(0,0.0f,0.0f));
-        addProduct(product);
 
         listviewCart.setCellFactory(new Callback<ListView<Product>, ListCell<Product>>() {
             @Override
@@ -94,6 +83,9 @@ public class MainScreen{
 
         listviewCart.setItems(cartList);
         updateUI();
+
+        readerThread = new RFIDReaderThread(this);
+        readerThread.start();
     }
 
     public void addProduct (Product product) {
@@ -161,4 +153,21 @@ public class MainScreen{
         }
     }
 
+
+    @Override
+    public void onRFIDScanned(String rfidCode) {
+        System.out.println(rfidCode);
+        Request request = new Request();
+
+        try {
+            JSONObject jsonObject = request.getURL(new URL("http://localhost:5000/products/"+rfidCode));
+            Product product = new Product(jsonObject.get("Name").toString(), "Rewe",
+                    Float.valueOf(jsonObject.get("Preis").toString()),"Getränk" ,
+                    new NutritionFact(0,0.0f,0.0f));
+            addProduct(product);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
 }

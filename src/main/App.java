@@ -31,7 +31,7 @@ public class App extends Application {
                     mqttClient.stopSessionThread();
                     stop();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                     e.printStackTrace();
                 }
             }
         });
@@ -39,8 +39,7 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        RFIDReader rfidReader = new RFIDReader();
-        rfidReader.startReaderThread();
+
         mqttClient = new MQTTClient();
         mqttClient.startSessionThread();
         launch(args);

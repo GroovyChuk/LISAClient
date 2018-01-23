@@ -21,6 +21,5 @@
     </orderEntry>
     <orderEntry type="library" name="mqtt-client-java1.4-uber-1.7" level="project" />
     <orderEntry type="library" name="json-simple-1.1" level="project" />
-    <orderEntry type="library" name="jython-standalone-2.7.0" level="project" />
   </component>
 </module>

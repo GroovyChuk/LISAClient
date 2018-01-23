@@ -30,7 +30,7 @@ public class RFIDReaderThread extends Thread{
         super.run();
         try {
             while (true) {
-                ProcessBuilder pb = new ProcessBuilder("python", "/home/alasdair/IdeaProjects/LISAClient/src/scripts/Read.py");
+                ProcessBuilder pb = new ProcessBuilder("python", App.PYTHON_SCRIPT_PATH);
                 Process p = pb.start();
                 BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 String line;
@@ -43,6 +43,8 @@ public class RFIDReaderThread extends Thread{
             e.printStackTrace();
         }
     }
+
+    //    /home/alasdair/IdeaProjects/LISAClient/src/scripts/Read.py
 
 
 }

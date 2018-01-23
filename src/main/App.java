@@ -14,6 +14,7 @@ public class App extends Application {
     public static Stage window;
     public static Scene loginScene;
     public static Scene mainScene;
+    public static String PYTHON_SCRIPT_PATH = "";
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -39,6 +40,9 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
+        PYTHON_SCRIPT_PATH = args[0];
+
+        System.out.println("Python-Script-Path: " + PYTHON_SCRIPT_PATH);
 
         mqttClient = new MQTTClient();
         mqttClient.startSessionThread();

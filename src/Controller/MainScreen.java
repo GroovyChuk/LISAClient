@@ -1,6 +1,7 @@
 package Controller;
 
 import HTTPRest.Request;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -174,7 +175,13 @@ public class MainScreen implements RFIDReaderThread.RFIDReader{
             Product product = new Product(jsonObject.get("Name").toString(), "Rewe",
                     Float.valueOf(jsonObject.get("Preis").toString()),"Getränk" ,
                     new NutritionFact(0,0.0f,0.0f));
-            addProduct(product);
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    addProduct(product);
+                }
+            });
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

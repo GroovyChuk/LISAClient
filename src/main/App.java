@@ -27,7 +27,7 @@ public class App extends Application {
         window.setScene(mainScene);
         window.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
-            public void handle(WindowEvent event) {
+                public void handle(WindowEvent event) {
                 try {
                     mqttClient.stopSessionThread();
                     stop();

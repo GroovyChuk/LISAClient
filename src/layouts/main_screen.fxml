@@ -22,7 +22,7 @@
                   <Image url="@../img/shopping_cart.png" />
                </image>
             </ImageView>
-            <Label layoutX="27.0" layoutY="127.0" text="Einkaufswagen ist leer" />
+            <Label layoutX="27.0" layoutY="127.0" text="Ihr Einkaufswagen ist leer" />
          </children>
       </Pane>
       <ImageView fitHeight="40.0" fitWidth="31.0" layoutX="252.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">

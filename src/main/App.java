@@ -14,13 +14,14 @@ public class App extends Application {
     public static Stage window;
     public static Scene loginScene;
     public static Scene mainScene;
+    public static String PYTHON_SCRIPT_PATH = "";
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         window = primaryStage;
 
-        loginScene = new Scene(FXMLLoader.load(getClass().getResource("../layouts/login_screen.fxml")), 800, 400);
-        mainScene = new Scene(FXMLLoader.load(getClass().getResource("../layouts/main_screen.fxml")), 800, 400);
+        loginScene = new Scene(FXMLLoader.load(getClass().getResource("/layouts/login_screen.fxml")), 800, 400);
+        mainScene = new Scene(FXMLLoader.load(getClass().getResource("/layouts/main_screen.fxml")), 800, 400);
 
         window.setTitle("LISA Client v0.01");
         window.setScene(mainScene);
@@ -39,6 +40,9 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
+        PYTHON_SCRIPT_PATH = args[0];
+
+        System.out.println("Python-Script-Path: " + PYTHON_SCRIPT_PATH);
 
         mqttClient = new MQTTClient();
         mqttClient.startSessionThread();

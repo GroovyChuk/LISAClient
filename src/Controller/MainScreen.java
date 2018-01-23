@@ -70,7 +70,7 @@ public class MainScreen implements RFIDReaderThread.RFIDReader{
         listviewCart.setCellFactory(new Callback<ListView<Product>, ListCell<Product>>() {
             @Override
             public ListCell<Product> call(ListView<Product> param) {
-                return new ProductListCell();
+                return new ProductListCell(MainScreen.this);
             }
         });
 
@@ -124,13 +124,9 @@ public class MainScreen implements RFIDReaderThread.RFIDReader{
             for (Product product : cartList)
                 productSum += product.getPrice();
 
-            labelProductSum.setText("Summe: " + productSum + " €");
-
-            if (cartList.size() > 0)
-                paneEmptyShoppingCart.setVisible(false);
-            else
-                paneEmptyShoppingCart.setVisible(true);
-
+            labelProductSum.setText("Summe: " + String.format("%.2f",productSum) + " €");
+            paneEmptyShoppingCart.setVisible(false);
+            anchorPaneCurrentProduct.setVisible(true);
 
             Image productTypeImage = null;
 
@@ -150,6 +146,20 @@ public class MainScreen implements RFIDReaderThread.RFIDReader{
             }
 
             imageViewProductType.setImage(productTypeImage);
+        }
+        else
+        {
+            float productSum = 0;
+
+            for (Product product : cartList)
+                productSum += product.getPrice();
+
+            labelProductSum.setText("Summe: " + String.format("%.2f",productSum) + " €");
+
+            paneEmptyShoppingCart.setVisible(true);
+            anchorPaneCurrentProduct.setVisible(false);
+            anchorPaneCurrentProductNutInfo.setVisible(false);
+
         }
     }
 

@@ -1,5 +1,6 @@
 package Controller;
 
+import HTTPRest.Request;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -13,8 +14,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 /**
@@ -61,13 +65,18 @@ public class MainScreen{
 
     @FXML
     private void initialize() throws IOException {
+        Request request = new Request();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = request.getURL(new URL("http://192.168.178.75:5000/products/4388810057817"));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
-        addProduct(new Product("Snickers","Mars",1.5f, ProductTypes.VEGETARIAN,new NutritionFact(481,60.5f,22.5f)));
-        addProduct(new Product("Mars","Mars",1f,ProductTypes.VEGETARIAN,new NutritionFact(449,70.2f,16.6f)));
-        addProduct(new Product("Macadamia","Bauer Alfred",2.3f,ProductTypes.VEGAN,new NutritionFact(745,4.2f,75.2f)));
-        addProduct(new Product("Peanuts","KA Company",0.5f,ProductTypes.VEGAN,new NutritionFact(615,9.3f,52.9f)));
-        addProduct(new Product("Xbox One","Microsoft",319.90f,ProductTypes.OBJECT,null));
-        addProduct(new Product("Roastbeef","Günni Metz",20.00f,ProductTypes.MEAT,new NutritionFact(110,2.2f,2f)));
+        Product product = new Product(jsonObject.get("Name").toString(), "Rewe",
+                Float.valueOf(jsonObject.get("Preis").toString()),"Getränk" ,
+                new NutritionFact(0,0.0f,0.0f));
+        addProduct(product);
 
         listviewCart.setCellFactory(new Callback<ListView<Product>, ListCell<Product>>() {
             @Override

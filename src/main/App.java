@@ -19,14 +19,14 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception{
         window = primaryStage;
 
-        loginScene = new Scene(FXMLLoader.load(getClass().getResource("../layouts/login_screen.fxml")), 800, 400);
-        mainScene = new Scene(FXMLLoader.load(getClass().getResource("../layouts/main_screen.fxml")), 800, 400);
+        loginScene = new Scene(FXMLLoader.load(getClass().getResource("/layouts/login_screen.fxml")), 800, 400);
+        mainScene = new Scene(FXMLLoader.load(getClass().getResource("/layouts/main_screen.fxml")), 800, 400);
 
         window.setTitle("LISA Client v0.01");
         window.setScene(mainScene);
         window.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
-            public void handle(WindowEvent event) {
+                public void handle(WindowEvent event) {
                 try {
                     mqttClient.stopSessionThread();
                     stop();

@@ -4,11 +4,11 @@ package HTTPRest;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * Created by alasdair on 22.01.18.
  */

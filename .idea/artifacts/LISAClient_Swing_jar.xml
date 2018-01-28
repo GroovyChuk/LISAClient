@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="LISAClient_Swing:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/LISAClient_Swing_jar</output-path>
+    <root id="archive" name="LISAClient_Swing.jar">
+      <element id="module-output" name="LISAClient_Swing" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/json-simple-1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/mqtt-client-java1.4-uber-1.7.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

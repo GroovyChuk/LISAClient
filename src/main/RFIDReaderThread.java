@@ -1,14 +1,9 @@
 package main;
 
 
-import Controller.MainScreen;
-import Controller.NutritionFact;
-import Controller.Product;
-import org.json.simple.JSONObject;
-
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Created by alasdair on 22.01.18.

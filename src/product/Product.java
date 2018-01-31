@@ -6,8 +6,9 @@ public class Product {
     private String producer;
     private String productType;
     private NutritionFact nutritionFact;
+    private String sGTIN;
 
-    public Product (String name, String producer,float price,String productType, NutritionFact nutritionFact) {
+    public Product (String name, String producer, float price, String productType, NutritionFact nutritionFact) {
         this.name = name;
         this.price = price;
         this.nutritionFact = nutritionFact;
@@ -39,5 +40,5 @@ public class Product {
         return price + " €";
     }
 
-
+    public String getsGTIN() { return sGTIN; }
 }

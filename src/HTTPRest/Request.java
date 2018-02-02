@@ -1,6 +1,7 @@
 package HTTPRest;
 
 
+import MQTT.Constants;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -14,7 +15,7 @@ import java.net.URL;
  */
 public class Request {
 
-    public JSONObject getURL(URL url){
+    public static JSONObject getURL(URL url){
         JSONObject jsonObject = new JSONObject();
         try {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -28,15 +29,26 @@ public class Request {
 
             InputStream inputStream = conn.getInputStream();
             JSONParser jsonParser = new JSONParser();
-            jsonObject = (JSONObject)jsonParser.parse(
-                    new InputStreamReader(inputStream, "UTF-8"));
-
+            jsonObject = (JSONObject)jsonParser.parse(new InputStreamReader(inputStream, "UTF-8"));
 
             conn.disconnect();
         } catch (Exception e){
-
+            e.printStackTrace();
         }
 
         return jsonObject;
+    }
+
+    public static String getNewSessionKey () {
+        String sessionKey = "";
+
+        try {
+            JSONObject jsonObject = getURL(new URL("http://localhost:5000/session/" + Constants.MAC_ADRESSE));
+            sessionKey = jsonObject.get("Session").toString();
+            System.out.println("New Session : " + sessionKey + " MAC: " + Constants.MAC_ADRESSE);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return sessionKey;
     }
 }

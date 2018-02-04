@@ -3,6 +3,7 @@ package frame; /**
  */
 
 import HTTPRest.Request;
+import main.App;
 import main.JConstants;
 import main.RFIDReaderThread;
 import org.json.simple.JSONObject;
@@ -25,17 +26,18 @@ public class JProductPanel extends JPanel implements ListSelectionListener, RFID
     private DefaultListModel listModel;
     private Thread readerThread;
     private ArrayList<Product> cartItems = new ArrayList<Product>();
-
+    private float cartSum = 0.00f;
+    private JLabel sumLabel;
+    private JProductDetailsPanel jProductDetailsPanel;
 
     private JButton removeButton;
 
-    public JProductPanel() {
+    public JProductPanel(JProductDetailsPanel jProductDetails) {
+        this.jProductDetailsPanel = jProductDetails;
         setPreferredSize(new Dimension(JConstants.WINDOW_SIZE_X/2, JConstants.WINDOW_SIZE_Y));
         setLayout(new BorderLayout());
 
         listModel = new DefaultListModel<JMainFrame>();
-
-
 
         //Create the list and put it in a scroll pane.
         list = new JList(listModel);
@@ -45,16 +47,16 @@ public class JProductPanel extends JPanel implements ListSelectionListener, RFID
         list.setVisibleRowCount(5);
         JScrollPane listScrollPane = new JScrollPane(list);
 
-
         removeButton = new JButton("Remove");
         removeButton.addActionListener(new RemoveListener());
 
-
         //Create a panel that uses BoxLayout.
         JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new BoxLayout(buttonPane,
-                BoxLayout.LINE_AXIS));
-        buttonPane.add(removeButton);
+        sumLabel = new JLabel();
+        updateCartSum();
+        buttonPane.setLayout(new BorderLayout());
+        buttonPane.add(removeButton,BorderLayout.WEST);
+        buttonPane.add(sumLabel, BorderLayout.EAST);
         buttonPane.add(Box.createHorizontalStrut(5));
         buttonPane.add(Box.createHorizontalStrut(5));
 
@@ -73,9 +75,19 @@ public class JProductPanel extends JPanel implements ListSelectionListener, RFID
 
             if (list.getSelectedIndex() == -1) {
                 //No selection, disable fire button.
+                jProductDetailsPanel.setProductDetails("Produktdetails","","","");
                 removeButton.setEnabled(false);
 
-            } else {
+            } else if (list.getSelectedIndex() != -1){
+                int index = 0;
+                Product p;
+                for (int i = 0; i < cartItems.size(); i++) {
+                    if (listModel.get(i).toString().contains(cartItems.get(i).getName()))
+                        index = i;
+                }
+                p = cartItems.get(index);
+                jProductDetailsPanel.setProductDetails(p.getName(),p.getProducer(),p.getProductType(),p.getFormatedPrice());
+
                 //Selection, enable the fire button.
                 removeButton.setEnabled(true);
             }
@@ -103,6 +115,7 @@ public class JProductPanel extends JPanel implements ListSelectionListener, RFID
 
                 list.setSelectedIndex(index);
                 list.ensureIndexIsVisible(index);
+
             }
         }
     }
@@ -110,6 +123,8 @@ public class JProductPanel extends JPanel implements ListSelectionListener, RFID
     public void addProduct (Product product) {
         listModel.insertElementAt(product.getName() + "   " + product.getPrice() + " €",0);
         cartItems.add(product);
+        cartSum += product.getPrice();
+        updateCartSum();
         updateUI();
     }
 
@@ -120,7 +135,8 @@ public class JProductPanel extends JPanel implements ListSelectionListener, RFID
             if (cartItems.get(i).getsGTIN() == product.getsGTIN())
                 cartItems.remove(i);
         }
-
+        cartSum -= product.getPrice();
+        updateCartSum();
         updateUI();
     }
 
@@ -129,7 +145,7 @@ public class JProductPanel extends JPanel implements ListSelectionListener, RFID
         Request request = new Request();
 
         try {
-            JSONObject jsonObject = request.getURL(new URL("http://localhost:5000/products/"+rfidCode));
+            JSONObject jsonObject = request.getURL(new URL("http://" + App.IP + ":5000/products/" + rfidCode));
             Product product = new Product(jsonObject.get("Name").toString(), "Rewe",
                     Float.valueOf(jsonObject.get("Preis").toString()),"Getränk" ,
                     new NutritionFact(0,0.0f,0.0f));
@@ -163,6 +179,10 @@ public class JProductPanel extends JPanel implements ListSelectionListener, RFID
             e.printStackTrace();
         }
 
+    }
+
+    public void updateCartSum(){
+        sumLabel.setText("Summe: " + cartSum + " €");
     }
 
 }

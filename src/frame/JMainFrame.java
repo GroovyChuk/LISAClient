@@ -17,8 +17,9 @@ public class JMainFrame extends JFrame {
     public JMainFrame () {
         super("LISAClient");
 
-        jProductPanel = new JProductPanel();
         jProductDetailsPanel = new JProductDetailsPanel();
+        jProductPanel = new JProductPanel(jProductDetailsPanel);
+
 
         this.setSize(new Dimension(JConstants.WINDOW_SIZE_X, JConstants.WINDOW_SIZE_Y));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

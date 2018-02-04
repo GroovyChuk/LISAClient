@@ -1,8 +1,9 @@
 package main;
 
+import MQTT.Constants;
 import MQTT.MQTTClient;
+import MQTT.Utilities;
 import frame.JMainFrame;
-
 import javax.swing.*;
 
 /**
@@ -30,6 +31,7 @@ public class App {
             System.out.println("REST-Server IP: " + IP);
             System.out.println("------------------------------------------------------------------");
         }
+        Constants.MAC_ADRESSE = Utilities.getMACAdress();
 
         mqttClient = new MQTTClient();
         mqttClient.startSessionThread();

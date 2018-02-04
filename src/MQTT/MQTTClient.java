@@ -17,7 +17,7 @@ public class MQTTClient {
     private ArrayList<MQTTListener> mqttListener;
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 1883;
-    private static final String TOPIC_NAME = "login";
+    private static final String TOPIC_NAME = "cart_unlock";
 
     public MQTTClient() {
         mqtt = new MQTT();
@@ -34,12 +34,18 @@ public class MQTTClient {
                 @Override
                 public void run() {
                     try {
-                        Message message = connection.receive();
-                        String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
-                        message.ack();
+                        boolean locked = true;
+                        while(locked) {
+                            Message message = connection.receive();
+                            String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
+                            message.ack();
 
-                        for (MQTTListener listener : mqttListener)
-                            listener.onSessionCodeScanned(payload);
+                            if (payload.equalsIgnoreCase(Constants.MAC_ADRESSE)) {
+                                for (MQTTListener listener : mqttListener)
+                                    listener.onSessionStarted();
+                                locked = false;
+                            }
+                        }
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -54,7 +60,7 @@ public class MQTTClient {
     }
 
     public interface MQTTListener {
-        public void onSessionCodeScanned(String sessionID);
+        public void onSessionStarted();
     }
 
     public boolean addMQTTListener(MQTTListener listener) {

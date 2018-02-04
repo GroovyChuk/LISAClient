@@ -7,6 +7,5 @@ import java.awt.*;
  */
 public class JConstants {
     public static final int WINDOW_SIZE_X = 800;
-    public static final int WINDOW_SIZE_Y = 400;
-
+    public static final int WINDOW_SIZE_Y = 480;
 }

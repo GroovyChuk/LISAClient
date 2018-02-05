@@ -13,21 +13,29 @@ public class App {
 
     public static MQTTClient mqttClient;
 
-    public static String PYTHON_SCRIPT_PATH = "";
+    public static String RFID_SCRIPT_PATH = "";
+    public static String SCALES_SCRIPT_PATH = "";
+    public static String SCALES_TARE_SCRIPT_PATH = "";
     public static String IP = "";
+    public static String sessionKey = "";
+    public static JMainFrame frame;
 
     public static void main (String[] args) {
 
 
-        if (args.length != 2)
+        if (args.length != 4)
         {
             System.out.println("Don't forget the python-script-path idiot !");
             return;
         }
         else{
-            PYTHON_SCRIPT_PATH = args[0];
-            IP = args[1];
-            System.out.println("Python-Script-Path: " + PYTHON_SCRIPT_PATH);
+            RFID_SCRIPT_PATH = args[0];
+            SCALES_SCRIPT_PATH = args[1];
+            SCALES_TARE_SCRIPT_PATH = args[2];
+            IP = args[3];
+            System.out.println("Python-Script-Path: " + RFID_SCRIPT_PATH);
+            System.out.println("Scales-Tare-Script-Path: " + SCALES_TARE_SCRIPT_PATH);
+            System.out.println("Scales-Script-Path: " + SCALES_SCRIPT_PATH);
             System.out.println("REST-Server IP: " + IP);
             System.out.println("------------------------------------------------------------------");
         }
@@ -36,7 +44,6 @@ public class App {
         mqttClient = new MQTTClient();
         mqttClient.startSessionThread();
 
-        JMainFrame frame = new JMainFrame();
-
+        frame = new JMainFrame();
     }
 }

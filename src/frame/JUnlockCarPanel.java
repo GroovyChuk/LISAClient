@@ -23,6 +23,7 @@ public class JUnlockCarPanel extends JPanel implements MQTTClient.MQTTListener{
     BufferedImage qrImageView;
     JFrame jMainFrame;
 
+
     public JUnlockCarPanel (JFrame jMainFrame) {
         this.setLayout(new BorderLayout());
         this.jMainFrame = jMainFrame;
@@ -31,6 +32,7 @@ public class JUnlockCarPanel extends JPanel implements MQTTClient.MQTTListener{
 
         try {
             String session = Request.getNewSessionKey();
+            App.sessionKey = session;
             QrCode qr0 = QrCode.encodeText(session, QrCode.Ecc.MEDIUM);
             BufferedImage img = qr0.toImage(10, 10);
             File file = new File(session + ".png");
@@ -44,11 +46,13 @@ public class JUnlockCarPanel extends JPanel implements MQTTClient.MQTTListener{
         }
     }
 
+
     @Override
     public void onSessionStarted() {
         jMainFrame.remove(this);
         jMainFrame.add(jProductPanel,BorderLayout.WEST);
         jMainFrame.add(jProductDetailsPanel, BorderLayout.EAST);
+        jProductPanel.startCartThreads();
     }
 
 }

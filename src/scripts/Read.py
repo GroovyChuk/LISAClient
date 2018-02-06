@@ -15,9 +15,9 @@ continue_reading = True
 # This loop keeps checking for chips. If one is near it will get the UID and authenticate
 while continue_reading:
     
-    time.sleep(5)
+    time.sleep(3)
     continue_reading = False
 
-    print(4388810057817)
+    print(4388810057817001)
 
 continue_reading = True

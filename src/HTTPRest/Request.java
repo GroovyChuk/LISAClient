@@ -2,6 +2,7 @@ package HTTPRest;
 
 
 import MQTT.Constants;
+import main.App;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -43,7 +44,7 @@ public class Request {
         String sessionKey = "";
 
         try {
-            JSONObject jsonObject = getURL(new URL("http://localhost:5000/session/" + Constants.MAC_ADRESSE));
+            JSONObject jsonObject = getURL(new URL("http://" + App.IP + ":5000/session/" + Constants.MAC_ADRESSE));
             sessionKey = jsonObject.get("Session").toString();
             System.out.println("New Session : " + sessionKey + " MAC: " + Constants.MAC_ADRESSE);
         }catch (Exception e){

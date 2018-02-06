@@ -46,4 +46,12 @@ public class App {
 
         frame = new JMainFrame();
     }
+
+    public static void restartMQTT(){
+        mqttClient.stopSessionThread();
+        mqttClient = new MQTTClient();
+        mqttClient.startSessionThread();
+    }
+
+
 }

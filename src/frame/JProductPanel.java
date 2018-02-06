@@ -22,60 +22,32 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static frame.JMainFrame.jProductDetailsPanel;
+import static frame.JMainFrame.jProductPanel;
+import static frame.JMainFrame.jUnlockCarPanel;
+
 public class JProductPanel extends JPanel implements ListSelectionListener, ScalesReaderThread.ScalesReader, RFIDReaderThread.RFIDReader{
 
     private JList list;
     private DefaultListModel listModel;
     private Thread readerThread , scalesThread;
-    private ArrayList<Product> cartItems = new ArrayList<Product>();
+    private ArrayList<Product> cartItems;
     private float cartSum = 0.00f;
     private JLabel sumLabel , weightLabel, scaleLabel;
     private JProductDetailsPanel jProductDetailsPanel;
-    int weight = 0;
+    private int weight = 0;
     private JButton purchaseButton;
+    private JMainFrame jMainFrame;
+    private JUnlockCarPanel jUnlockCarPanel;
 
-    public JProductPanel(JProductDetailsPanel jProductDetails) {
+    public JProductPanel(JProductDetailsPanel jProductDetails, JUnlockCarPanel jUnlockCarPanel, JMainFrame jMainFrame) {
         this.jProductDetailsPanel = jProductDetails;
-        setPreferredSize(new Dimension(JConstants.WINDOW_SIZE_X/2, JConstants.WINDOW_SIZE_Y));
-        setLayout(new BorderLayout());
-
-        listModel = new DefaultListModel<JMainFrame>();
-
-        //Create the list and put it in a scroll pane.
-        list = new JList(listModel);
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setSelectedIndex(0);
-        list.addListSelectionListener(this);
-        list.setVisibleRowCount(5);
-        JScrollPane listScrollPane = new JScrollPane(list);
-
-
-
-        //Create a panel that uses BoxLayout.
-        JPanel buttonPane = new JPanel();
-        sumLabel = new JLabel();
-        weightLabel = new JLabel();
-        scaleLabel = new JLabel();
-        scaleLabel.setText("Bitte stellen Sie den gescannten Artikel auf die Waage.");
-        scaleLabel.setVisible(false);
-        updateCartSum();
-        updateScales(0);
-        purchaseButton = new JButton("Kaufen");
-        purchaseButton.addActionListener(new PurchaseListener());
-        buttonPane.setLayout(new BorderLayout());
-        buttonPane.add(sumLabel, BorderLayout.LINE_END);
-        buttonPane.add(purchaseButton,BorderLayout.NORTH);
-        buttonPane.add(weightLabel, BorderLayout.LINE_START);
-
-
-        buttonPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-
-        add(listScrollPane, BorderLayout.CENTER);
-        add(buttonPane, BorderLayout.PAGE_END);
-        add(scaleLabel, BorderLayout.PAGE_START);
-        readerThread = new RFIDReaderThread(this);
-        scalesThread = new ScalesReaderThread(this);
+        this.jMainFrame = jMainFrame;
+        this.jUnlockCarPanel = jUnlockCarPanel;
+        init();
     }
+
+
 
 
     @Override
@@ -85,6 +57,7 @@ public class JProductPanel extends JPanel implements ListSelectionListener, Scal
             if (list.getSelectedIndex() == -1) {
                 //No selection, disable fire button.
                 jProductDetailsPanel.setProductDetails("Produktdetails","","","", "");
+                jProductDetailsPanel.enableNutritionalValues(false);
 
             } else if (list.getSelectedIndex() != -1){
                 int index = 0, productIndex = 0;
@@ -106,7 +79,10 @@ public class JProductPanel extends JPanel implements ListSelectionListener, Scal
                         occurrence++;
                 }
                 jProductDetailsPanel.setProductDetails(p.getName(),p.getProducer(),p.getProductType(),p.getFormatedPrice(),"" + occurrence);
-
+                if (p.getProductType().equalsIgnoreCase("Lebensmittel")){
+                    jProductDetailsPanel.enableNutritionalValues(true);
+                    jProductDetailsPanel.setNutritionalValues(p.getNutritionFact().getCalories() + " kcal",p.getNutritionFact().getTotalFat() + " g",p.getNutritionFact().getCarbohydrates() + " g");
+                }
             }
         }
     }
@@ -175,9 +151,9 @@ public class JProductPanel extends JPanel implements ListSelectionListener, Scal
 
         try {
             JSONObject jsonObject = request.getURL(new URL("http://" + App.IP + ":5000/products/" + rfidCode.substring(0,13)));
-            Product product = new Product(jsonObject.get("Name").toString(), "Rewe",
-                    Float.valueOf(jsonObject.get("Preis").toString()),"Getränk" ,
-                    new NutritionFact(0,0.0f,0.0f),rfidCode, Integer.parseInt(jsonObject.get("Gewicht").toString()));
+            Product product = new Product(jsonObject.get("Name").toString(), jsonObject.get("Hersteller").toString(),
+                    Float.valueOf(jsonObject.get("Preis").toString()),jsonObject.get("Typ").toString() ,
+                    new NutritionFact(Integer.parseInt(jsonObject.get("Kalorien").toString()),Integer.parseInt(jsonObject.get("Kohlenhydrate").toString()),Integer.parseInt(jsonObject.get("Fett").toString())),rfidCode, Integer.parseInt(jsonObject.get("Gewicht").toString()));
             Thread add = new Thread() {
                 @Override
                 public void run() {
@@ -188,12 +164,12 @@ public class JProductPanel extends JPanel implements ListSelectionListener, Scal
                                 added = true;
                         }
                         if (!added) {
-                            while ((product.getWeight() * 0.7 > weight ) || (product.getWeight() * 1.3 < weight)){
-                                scaleLabel.setVisible(true);
-                            }
+//                            while ((product.getWeight() * 0.7 > weight ) || (product.getWeight() * 1.3 < weight)){
+//                                scaleLabel.setVisible(true);
+//                            }
+                            ProcessBuilder pb = new ProcessBuilder("python", "/home/pi/Documents/greenled.py");
                             scaleLabel.setVisible(false);
                             addProduct(product);
-                            ProcessBuilder pb = new ProcessBuilder("python", "/home/pi/Documents/greenled.py");
                             Process p = pb.start();
 
                         } else {
@@ -226,12 +202,12 @@ public class JProductPanel extends JPanel implements ListSelectionListener, Scal
 
     public void startCartThreads() {
 
-        ProcessBuilder tare = new ProcessBuilder("python", App.SCALES_TARE_SCRIPT_PATH);
-        try {
-            tare.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        ProcessBuilder tare = new ProcessBuilder("python", App.SCALES_TARE_SCRIPT_PATH);
+//        try {
+//            tare.start();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         scalesThread.start();
         readerThread.start();
     }
@@ -246,15 +222,83 @@ public class JProductPanel extends JPanel implements ListSelectionListener, Scal
 
     class PurchaseListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            JSONObject jsonPurchase = new JSONObject();
             try {
                 URL purchase = new URL("http://" + App.IP + ":5000/session/purchase/" + App.sessionKey + "/" + cartSum);
-                Request.getURL(purchase);
+                jsonPurchase = Request.getURL(purchase);
             } catch (MalformedURLException e1) {
                 e1.printStackTrace();
             }
 
-
+            for (Product cartItem : cartItems) {
+                try {
+                    URL item = new URL("http://" + App.IP + ":5000/session/productpurchase/" + cartItem.getsGTIN().substring(0,13) + "/" + jsonPurchase.get("EID").toString());
+                    Request.getURL(item);
+                } catch (MalformedURLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            stopSession();
         }
+    }
+
+    public void stopSession(){
+        jMainFrame.remove(this);
+        jMainFrame.remove(jProductDetailsPanel);
+        scalesThread.stop();
+        readerThread.stop();
+        init();
+        App.restartMQTT();
+        jUnlockCarPanel = new JUnlockCarPanel(jMainFrame);
+        jMainFrame.setContentPane(jUnlockCarPanel);
+        jMainFrame.invalidate();
+        jMainFrame.validate();
+
+
+
+    }
+
+    private void init(){
+        setPreferredSize(new Dimension(JConstants.WINDOW_SIZE_X/2, JConstants.WINDOW_SIZE_Y));
+        setLayout(new BorderLayout());
+
+        listModel = new DefaultListModel<JMainFrame>();
+        cartItems = new ArrayList<Product>();
+
+        //Create the list and put it in a scroll pane.
+        list = new JList(listModel);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setSelectedIndex(0);
+        list.addListSelectionListener(this);
+        list.setVisibleRowCount(5);
+        JScrollPane listScrollPane = new JScrollPane(list);
+
+
+
+        //Create a panel that uses BoxLayout.
+        JPanel buttonPane = new JPanel();
+        sumLabel = new JLabel();
+        weightLabel = new JLabel();
+        scaleLabel = new JLabel();
+        scaleLabel.setText("Bitte stellen Sie den gescannten Artikel auf die Waage.");
+        scaleLabel.setVisible(false);
+        updateCartSum();
+        updateScales(0);
+        purchaseButton = new JButton("Kaufen");
+        purchaseButton.addActionListener(new PurchaseListener());
+        buttonPane.setLayout(new BorderLayout());
+        buttonPane.add(sumLabel, BorderLayout.LINE_END);
+        buttonPane.add(purchaseButton,BorderLayout.NORTH);
+        buttonPane.add(weightLabel, BorderLayout.LINE_START);
+
+
+        buttonPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+        add(listScrollPane, BorderLayout.CENTER);
+        add(buttonPane, BorderLayout.PAGE_END);
+        add(scaleLabel, BorderLayout.PAGE_START);
+        readerThread = new RFIDReaderThread(this);
+        scalesThread = new ScalesReaderThread(this);
     }
 
 }

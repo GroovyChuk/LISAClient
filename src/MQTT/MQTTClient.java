@@ -15,7 +15,7 @@ public class MQTTClient {
     private Thread sessionThread;
 
     private ArrayList<MQTTListener> mqttListener;
-    private static final String SERVER_IP = "localhost";
+    private static final String SERVER_IP = main.App.IP;
     private static final int SERVER_PORT = 1883;
     private static final String TOPIC_NAME = "cart_unlock";
 

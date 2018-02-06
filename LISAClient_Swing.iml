@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="mqtt-client-java1.4-uber-1.7" level="project" />
     <orderEntry type="library" name="json-simple-1.1" level="project" />
+    <orderEntry type="library" name="MigLayout" level="project" />
   </component>
 </module>
